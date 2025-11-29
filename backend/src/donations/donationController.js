@@ -1,12 +1,8 @@
-const express = require('express');
 const { PrismaClient } = require('@prisma/client');
-const { auth, requireRole } = require('../middleware/auth');
 
-const router = express.Router();
 const prisma = new PrismaClient();
 
-// Create donation (donor only)
-router.post('/', auth, requireRole('donor'), async (req, res) => {
+const createDonation = async (req, res) => {
   try {
     const { foodType, approxQuantity, quantityUnit, area, pickupAddress, preferredPickupTime, contactNumber, photos, suggestedVolunteerId } = req.body;
     
@@ -32,10 +28,9 @@ router.post('/', auth, requireRole('donor'), async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
-});
+};
 
-// Get donations (with filters)
-router.get('/', auth, async (req, res) => {
+const getDonations = async (req, res) => {
   try {
     const { area, status = 'available', sort = 'createdAt', page = 1, limit = 10 } = req.query;
     
@@ -57,10 +52,9 @@ router.get('/', auth, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
-});
+};
 
-// Accept donation (volunteer only)
-router.post('/:id/accept', auth, requireRole('volunteer'), async (req, res) => {
+const acceptDonation = async (req, res) => {
   try {
     const result = await prisma.$transaction(async (tx) => {
       const updated = await tx.donation.updateMany({
@@ -72,14 +66,12 @@ router.post('/:id/accept', auth, requireRole('volunteer'), async (req, res) => {
         throw new Error('Donation not available');
       }
 
-      const acceptance = await tx.acceptance.create({
+      return await tx.acceptance.create({
         data: {
           donationId: req.params.id,
           volunteerId: req.user.id
         }
       });
-
-      return acceptance;
     });
 
     res.json({ message: 'Donation accepted', acceptance: result });
@@ -89,10 +81,9 @@ router.post('/:id/accept', auth, requireRole('volunteer'), async (req, res) => {
     }
     res.status(500).json({ error: 'Server error' });
   }
-});
+};
 
-// Complete donation
-router.post('/:id/complete', auth, requireRole('volunteer'), async (req, res) => {
+const completeDonation = async (req, res) => {
   try {
     const acceptance = await prisma.acceptance.findFirst({
       where: { donationId: req.params.id, volunteerId: req.user.id }
@@ -117,28 +108,6 @@ router.post('/:id/complete', auth, requireRole('volunteer'), async (req, res) =>
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
-});
+};
 
-// Cancel donation (donor only)
-router.delete('/:id', auth, requireRole('donor'), async (req, res) => {
-  try {
-    const donation = await prisma.donation.findFirst({
-      where: { id: req.params.id, donorId: req.user.id, status: 'available' }
-    });
-
-    if (!donation) {
-      return res.status(404).json({ error: 'Donation not found or cannot be cancelled' });
-    }
-
-    await prisma.donation.update({
-      where: { id: req.params.id },
-      data: { status: 'cancelled' }
-    });
-
-    res.json({ message: 'Donation cancelled' });
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-module.exports = router;
+module.exports = { createDonation, getDonations, acceptDonation, completeDonation };
