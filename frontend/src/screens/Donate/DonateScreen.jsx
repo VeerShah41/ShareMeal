@@ -1,13 +1,5 @@
-// DonateScreen.jsx
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import {View,Text,StyleSheet,FlatList,TouchableOpacity,Image,} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -46,15 +38,12 @@ const DEFAULT_DONATIONS = [
 const DonateScreen = ({ navigation }) => {
   const [donations, setDonations] = useState(DEFAULT_DONATIONS);
 
-  // Load donations from AsyncStorage & merge with default
   const loadDonations = async () => {
     try {
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
 
       if (stored) {
         const parsed = JSON.parse(stored);
-
-        // add default donations + stored ones
         setDonations([...DEFAULT_DONATIONS, ...parsed]);
       } else {
         setDonations(DEFAULT_DONATIONS);
@@ -73,7 +62,6 @@ const DonateScreen = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
-  // Cancel for BOTH default & stored donations
   const handleCancel = async (id) => {
     const updated = donations.map((item) =>
       item.id === id ? { ...item, status: "Cancelled" } : item
@@ -81,14 +69,12 @@ const DonateScreen = ({ navigation }) => {
 
     setDonations(updated);
 
-    // ONLY update asyncStorage donations (not defaults)
     const updatedStored = updated.filter((item) => Number(item.id) > 3);
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedStored));
   };
 
   const renderCard = ({ item }) => (
     <View style={styles.card}>
-      {/* LEFT SIDE IMAGE */}
       {item.photos && item.photos.length > 0 ? (
         <Image source={{ uri: item.photos[0] }} style={styles.foodImage} />
       ) : item.image ? (
@@ -99,7 +85,6 @@ const DonateScreen = ({ navigation }) => {
         </View>
       )}
 
-      {/* RIGHT SIDE CONTENT */}
       <View style={styles.cardBody}>
         <View style={styles.cardHeader}>
           <Text style={styles.foodType}>{item.foodType}</Text>
@@ -149,13 +134,12 @@ const DonateScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
+      
       <View style={styles.header}>
         <Text style={styles.headerTitle}>ShareMeal</Text>
         <Text style={styles.headerSubtitle}>Donation Dashboard</Text>
       </View>
 
-      {/* Create donation section */}
       <View style={styles.buttonWrapper}>
         <Text style={styles.tagline}>
           Share extra food — make someone's day brighter!
@@ -171,7 +155,6 @@ const DonateScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Donation list */}
       <FlatList
         data={donations}
         renderItem={renderCard}
@@ -208,7 +191,6 @@ const styles = StyleSheet.create({
     color: "#16A085",
   },
 
-  /* Create Donation Button */
   buttonWrapper: {
     paddingHorizontal: 16,
     marginTop: 12,
@@ -241,7 +223,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  /* CARD */
   card: {
     flexDirection: "row",
     backgroundColor: "#ffffff",
