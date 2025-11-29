@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './src/screens/Splash/SplashScreen.jsx';
 import TabNavigator from './src/navigation/TabNavigator';
+import CreateDonationForm from './src/screens/Donate/CreateDonationForm.jsx';
 
 // Configure the theme
 const theme = {
@@ -40,6 +41,8 @@ export default function App() {
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Splash" component={SplashScreen} />
             <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="CreateDonationForm" component={CreateDonationForm} />
+
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
