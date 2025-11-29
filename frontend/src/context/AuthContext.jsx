@@ -62,6 +62,35 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const register = async (name, email, password, phone, location) => {
+        try {
+            // Basic validation
+            if (!name || !email || !password) {
+                throw new Error('Name, email, and password are required');
+            }
+
+            // For demo purposes, create a new user
+            // In a real app, you would make an API call here
+            const userData = {
+                id: Date.now().toString(),
+                name: name,
+                email: email,
+                phone: phone || '+1 234 567 8900',
+                location: location || 'New York, USA',
+                donationsCount: 0,
+                volunteerHours: 0,
+            };
+
+            // Store user data
+            await AsyncStorage.setItem('user', JSON.stringify(userData));
+            setUser(userData);
+            return { success: true };
+        } catch (error) {
+            console.error('Registration error:', error);
+            return { success: false, error: error.message };
+        }
+    };
+
     const logout = async () => {
         try {
             await AsyncStorage.removeItem('user');
@@ -75,6 +104,7 @@ export const AuthProvider = ({ children }) => {
         user,
         loading,
         login,
+        register,
         logout,
         isAuthenticated: !!user,
     };

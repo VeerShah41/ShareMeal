@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import SplashScreen from './src/screens/Splash/SplashScreen.jsx';
 import LoginScreen from './src/screens/Login/LoginScreen.jsx';
+import RegisterScreen from './src/screens/Register/RegisterScreen.jsx';
 import TabNavigator from './src/navigation/TabNavigator';
 import CreateDonationForm from './src/screens/Donate/CreateDonationForm.jsx';
 
@@ -49,6 +50,7 @@ const AppNavigator = () => {
       >
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Main" component={TabNavigator} />
         <Stack.Screen name="CreateDonationForm" component={CreateDonationForm} />
       </Stack.Navigator>

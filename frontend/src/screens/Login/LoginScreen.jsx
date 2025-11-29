@@ -84,7 +84,13 @@ const LoginScreen = () => {
                         </TouchableOpacity>
 
                         <View style={styles.footer}>
-                            <Text style={styles.footerText}>
+                            <View style={styles.footerRow}>
+                                <Text style={styles.footerText}>Don't have an account? </Text>
+                                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                                    <Text style={styles.footerLink}>Sign Up</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={styles.footerNote}>
                                 For demo purposes, any email/password will work
                             </Text>
                         </View>
@@ -159,7 +165,21 @@ const styles = StyleSheet.create({
         marginTop: 24,
         alignItems: 'center',
     },
+    footerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
     footerText: {
+        fontSize: 14,
+        color: '#666',
+    },
+    footerLink: {
+        fontSize: 14,
+        color: '#1ABC9C',
+        fontWeight: '600',
+    },
+    footerNote: {
         fontSize: 12,
         color: '#999',
         textAlign: 'center',

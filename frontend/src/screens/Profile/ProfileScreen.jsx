@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 
 const ProfileScreen = () => {
     const { user, logout } = useAuth();
+    const navigation = useNavigation();
 
     // Use user data from auth context, fallback to default if not available
     const userData = user || {
@@ -30,6 +32,14 @@ const ProfileScreen = () => {
                     style: 'destructive',
                     onPress: async () => {
                         await logout();
+                        // Get the root navigator (Stack Navigator) and reset to Login
+                        const rootNavigation = navigation.getParent() || navigation;
+                        rootNavigation.dispatch(
+                            CommonActions.reset({
+                                index: 0,
+                                routes: [{ name: 'Login' }],
+                            })
+                        );
                     },
                 },
             ]
